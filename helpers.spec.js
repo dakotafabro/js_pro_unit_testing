@@ -72,13 +72,46 @@ describe('sortList', () => {
  */
 
 describe('formatCurrency', () => {
-  it('does <insert your test here>', () => {
-    return true;
+  it('returns $0.00 when given a non number/integer', () => {
+    const num = 'ABC';
+    expect(formatCurrency(num)).toEqual('$0.00');
+  });
+
+  it('when given a valid num/integer, it returns that num in currency form', () => {
+    const num = 5;
+    expect(formatCurrency(num)).toEqual('$5.00');
   });
 });
 
+/*
+handling promises in tests means you have to create the promise or the rejected promises yourself;
+new syntax I learned was creating new promises as well as rejected promises that become errors
+*/
+
 describe('handlePromises', () => {
-  it('does <insert your test here>', () => {
-    return true;
+  it('resolves all promise', async () => {
+    const promise1 = new Promise((res, rej) => {
+      return res('HELLO');
+    });
+
+    const promise2 = new Promise((res, rej) => {
+      return res('WORLD');
+    });
+
+    const data = await handlePromises([promise1, promise2]);
+    expect(data).toEqual(['HELLO', 'WORLD']);
+  });
+
+  it('resolves rejected promises', async () => {
+    const promise1 = new Promise((res, rej) => {
+      return rej('ERROR');
+    });
+
+    const promise2 = new Promise((res, rej) => {
+      return rej('ERROR AGAIN');
+    });
+
+    const data = await handlePromises([promise1, promise2]);
+    expect(data).toEqual(new Error('ERROR')); // the expected value here is the first rejected promise because the error will be thrown and will stop the function, hence return the first rejection rather than all
   });
 });
